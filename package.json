@@ -1,5 +1,5 @@
 {
-  "name": "PCA",
+  "name": "Sensebook",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,8 +10,14 @@
     "native-base": "^2.8.0",
     "react": "16.4.1",
     "react-native": "^0.55.4",
+    "react-native-android-wifi": "0.0.34",
+    "react-native-background-timer": "^2.0.1",
+    "react-native-ble-manager": "^6.5.0",
+    "react-native-ble-plx": "^0.10.0",
     "react-native-device-info": "^0.22.5",
+    "react-native-geolocation-service": "^1.1.0",
     "react-native-localization": "^2.0.1",
+    "react-native-permissions": "^1.1.1",
     "react-native-proximity": "^3.0.0",
     "react-native-sensors": "^3.0.0",
     "react-native-vector-icons": "^5.0.0",
@@ -19,6 +25,7 @@
   },
   "devDependencies": {
     "babel-jest": "23.4.2",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "babel-preset-react-native": "^4.0.0",
     "jest": "23.5.0",
     "react-test-renderer": "16.4.1"

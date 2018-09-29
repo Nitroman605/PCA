@@ -3,6 +3,7 @@ import { View,StatusBar, Text, Image  , StyleSheet , ImageBackground , KeyboardA
 import { Input , Form , Item , Icon , Button , Toast , Root , Label} from 'native-base'
 import LocalizedStrings from 'react-native-localization';
 import {checkInternet} from './util/util'
+import DeviceInfo  from 'react-native-device-info'
 
 let strings = new LocalizedStrings({
     en:{
@@ -16,20 +17,28 @@ let strings = new LocalizedStrings({
        noInput : "Please enter your username and password",
        ok : "Ok", 
        sign : "Already got an account ? Sign in",
-       title : "Create Account"
+       title : "Create Account",
+       emailUsed : "The email is already registered",
+       password8 : "The length of the password must be 8 or more",
+       passMatch : "The passwords does not match",
+       wrongEmail : "The email is not correct",
      },
      ar: {
          user:"البريد الإلكتروني",
          password:"كلمة المرور",
          consfirmPass : "تأكيد كلمة المرور",
          login:"تسجيل",
-         errorLogin : "اسم المستخدم أو كلمة المرور غير صحيحة",
+         errorLogin : "البريد الإلكتروني أو كلمة المرور غير صحيحة",
          errorConn : "خطا في الوصول إلى سيرفرات ستديا",
          errorNet : "الرجاء التحقق من اتصالك بالإنترنت",
-         noInput : "الرجاء ادخال اسم المستخدم و كلمة المرور", 
+         noInput : "الرجاء ادخال البريد الإلكتروني و كلمة المرور", 
          ok : "موافق",
          sing: "لديك حساب ؟ قم بتسجيل الدخول",
-         title : "تسجيل حساب"
+         title : "تسجيل حساب",
+         emailUsed : "البريد الإلكتروني مستخدم حاليا",
+         password8 : "طول كلمة المرور يجب أن تكون 8 أو أكثر",
+         passMatch : "كلمة المرور لا تتطابق",
+         wrongEmail : "البريد الإلكتروني غير صحيح",
      }
     })
 
@@ -56,18 +65,151 @@ export default class Sign extends React.Component {
         }
       };
     
-    login = () => {
-        this.props.navigation.goBack()
-    }
+      login = () => {
+        //this.props.navigation.navigate('Home')
+          if(this.state.password.length < 8){
+            this.setState({ error: true });
+            this.setState({ disable: false });
+            Toast.show({
+                text: strings.password8,
+                position: 'bottom',
+                buttonText: strings.ok,
+                type: 'warning',
+                duration : 6000,
+              })
+          }
+          else{
+            if(this.state.password != this.state.consfirmPass){
+                this.setState({ error: true });
+                this.setState({ disable: false });
+                Toast.show({
+                    text: strings.passMatch,
+                    position: 'bottom',
+                    buttonText: strings.ok,
+                    type: 'warning',
+                    duration : 6000,
+                  })
+            }
+            else{
+                if(this.state.username != ''){
+                    if(this.validateEmail(this.state.username)){
+                      checkInternet().then(isConnected => {
+                        if (isConnected) {
+                          let brand = DeviceInfo.getBrand()
+                          let modal = DeviceInfo.getModel()
+                          fetch('http://35.187.64.144/user/signup', {
+                            method: 'POST',
+                            headers: {
+                              'Accept': 'application/json',
+                              'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: "email=" + this.state.username + "&password=" + this.state.password + "&brand=" + brand +"&modal="+modal
+                          })
+                            .then((response) => response.json())
+                            .then(async (res) => {
+                              console.log(res);
+                              if (res.status == "success") {
+                                console.log("Login Successfully")
+                                //let result: boolean = await regToken(res.data.loginToken, this.state.token);
+                                  this.setState({ disable: false });
+                                  await AsyncStorage.setItem('token',res.data.token);
+                                  await AsyncStorage.setItem('email',this.state.username);
+                                  this.props.navigation.navigate('Home')
+                              }
+                              else if (res.status == "fail") {
+                                if(res.code == 1){
+                                    this.setState({ error: true });
+                                    this.setState({ disable: false });
+                                    Toast.show({
+                                      text: strings.emailUsed,
+                                      position: 'bottom',
+                                      buttonText: strings.ok,
+                                      type: 'warning',
+                                      duration : 6000,
+                                    })
+                                }
+                                else{
+                                    this.setState({ error: true });
+                                    this.setState({ disable: false });
+                                    Toast.show({
+                                      text: strings.errorLogin,
+                                      position: 'bottom',
+                                      buttonText: strings.ok,
+                                      type: 'warning',
+                                      duration : 6000,
+                                    })
+                                }
+                              }
+                            })
+                            .catch((error) => {
+                              console.error(error);
+                              console.log("No Server");
+                              Toast.show({
+                                text: strings.errorConn,
+                                position: 'bottom',
+                                buttonText: strings.ok,
+                                type: 'warning',
+                                duration : 6000,
+                              })
+                              this.setState({ error: true });
+                              this.setState({ disable: false });
+                            });
+                        }
+                        else {
+                          console.log("No Internet");
+                          this.setState({ disable: false });
+                          Toast.show({
+                            text: strings.errorNet,
+                            position: 'bottom',
+                            buttonText: strings.ok,
+                            type: 'warning',
+                            duration : 6000,
+                          })
+                        }
+                      });
+                    }
+                    else{
+                      this.setState({ disable: false });
+                      this.setState({error : true})
+                      Toast.show({
+                          text: strings.wrongEmail,
+                          position: 'bottom',
+                          buttonText: strings.ok,
+                          type: 'warning',
+                          duration : 6000,
+                        })
+                    }
+                    }
+                    else{
+                      this.setState({ disable: false });
+                      this.setState({error : true})
+                      Toast.show({
+                          text: strings.noInput,
+                          position: 'bottom',
+                          buttonText: strings.ok,
+                          type: 'warning',
+                          duration : 6000,
+                        })
+                    }
+            }
+          }
+
+            
+      }
 
     handleFocus(inputField) {
         this[inputField]._root.focus();
     }
 
+    validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
 
     render() {
         return (
-            <View style={{flex : 1}} >
+            
+            <ScrollView style={{flex : 1 , paddingHorizontal : 10}} >
             <StatusBar
           barStyle="light-content"
           backgroundColor="rgb(50,50,50)"
@@ -85,13 +227,12 @@ export default class Sign extends React.Component {
                 <View style={{ flex: 1 }}>
                     <View style={styles.itemContainer}>
                         <Form >
-                            <View style={{marginTop : 0}} >
-                                <Item floatingLabel  error={this.state.error} style={[styles.item,{flexDirection : strings.getLanguage() == 'en'? 'row':'row-reverse'}]}>
-                                    <Label style={{marginLeft : 10}} >{strings.user}</Label>
+                            
+                                <Item error={this.state.error} style={[styles.item,{flexDirection : strings.getLanguage() == 'en'? 'row':'row-reverse'}]}>
                                     <Icon style={[styles.input,{color : this.state.username == ''?'rgb(90,90,90)':'rgb(4,95,225)'}]} active name="person" />
                                     <Input
                                         onChangeText={(username) => this.setState({ username })}
-                                        //placeholder={strings.user}
+                                        placeholder={strings.user}
                                         returnKeyType='next'
                                         onSubmitEditing={() => this.handleFocus('passwordInput')}
                                         disabled={this.state.disable}
@@ -99,16 +240,14 @@ export default class Sign extends React.Component {
                                         style={{color : 'black' , textAlign : 'left' }}
                                     />
                                 </Item>
-                            </View>
-                            <View >
-                                <Item floatingLabel error={this.state.error} style={[styles.item,{flexDirection : strings.getLanguage() == 'en'? 'row':'row-reverse'}]}>
-                                    <Label style={{marginLeft : 10}}>{strings.password}</Label>
+                           
+                                <Item  error={this.state.error} style={[styles.item,{flexDirection : strings.getLanguage() == 'en'? 'row':'row-reverse'}]}>
                                     <Icon style={[styles.input,{color : this.state.password == ''?'rgb(90,90,90)':'rgb(4,95,225)'}]} active name="key" />
                                     <Input
                                         ref={(c) => this.passwordInput = c}
                                         secureTextEntry
                                         onChangeText={(password) => this.setState({ password })}
-                                        //placeholder={strings.password}
+                                        placeholder={strings.password}
                                         returnKeyType='next'
                                         onSubmitEditing={() => this.handleFocus('confirmPass')}
                                         disabled={this.state.disable}
@@ -117,53 +256,43 @@ export default class Sign extends React.Component {
                                         
                                     />
                                 </Item>
-                                <Item floatingLabel error={this.state.error} style={[styles.item,{flexDirection : strings.getLanguage() == 'en'? 'row':'row-reverse'}]}>
-                                    <Label style={{marginLeft : 10}}>{strings.consfirmPass}</Label>
+                                <Item error={this.state.error} style={[styles.item,{flexDirection : strings.getLanguage() == 'en'? 'row':'row-reverse'}]}>
                                     <Icon style={[styles.input,{color : this.state.consfirmPass == ''?'rgb(90,90,90)':'rgb(4,95,225)'}]} active name="key" />
                                     <Input
                                         ref={(d) => this.confirmPass = d}
                                         secureTextEntry
                                         onChangeText={(consfirmPass) => this.setState({ consfirmPass })}
-                                        //placeholder={strings.consfirmPass}
+                                        placeholder={strings.consfirmPass}
                                         onSubmitEditing={() => this.login()}
                                         disabled={this.state.disable}
                                         placeholderTextColor='rgb(90,90,90)'
                                         style={{ color : 'black' , textAlign : 'left'}}
                                         
                                     />
-                                </Item>
-                            </View>
-                            
-                    <Item style={{ borderBottomWidth: 0,marginRight : 10, marginTop : 15 }}>
+                                </Item>      
+                    <Item style={{ borderBottomWidth: 0,marginRight : 10, marginTop : 15}}>
                     <ScrollView style={{width : 300 , borderColor : 'rgb(60,60,60)' , borderRadius : 10 , backgroundColor : 'rgba(255,255,255,0.8)',
                                 height : 250, paddingTop : 5 , paddingHorizontal : 4
                                 }} >
                         <Text style={{color : 'black' , fontSize : 16 , fontWeight : 'bold'}} >We will secure your data using the latest securtiy standerds</Text>
                     </ScrollView>
                     </Item>
+
                     <Item style={{ borderBottomWidth: 0 , marginLeft:0 }}>
                     <View style={styles.buttonContainer}>
-
                       <Button disabled={this.state.disable} style = { styles.buttonLogin } block onPress={this.login}>
                         <Text uppercase={false} style={{color : 'white', fontWeight : 'bold' , fontSize : 20}}>{strings.login}</Text>
                       </Button>
-                      <TouchableOpacity style={{marginTop : 20}} onPress={this.login}>
-                        <Text uppercase={false} style={{color : 'black', fontWeight : 'bold' , textAlign : 'center' , fontSize : 16 , textDecorationLine : 'underline'}}>{strings.sign}</Text>
-                      </TouchableOpacity>
                     </View>
-                  </Item>
-                            
+                    </Item>   
 
                   </Form>
                 </View >
                 </View >
-            <View style={{ flex: 1 }}>
-            </View>
-            
             </View >
             </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
-            </View>
+            </ScrollView>
         );
     }
 }
@@ -192,6 +321,7 @@ const styles = StyleSheet.create({
       marginRight: 0,
       marginBottom: 5,
       width : 370,
+      paddingHorizontal : 5
     },
     button: {
       flex: 1,
@@ -208,8 +338,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       marginLeft: 20,
       marginRight: 20,
-      marginTop: 15,
-  
+      marginTop: 10,
     },
     buttonLogin: {
       backgroundColor: 'rgba(30,30,30,0.8)',

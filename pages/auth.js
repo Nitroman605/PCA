@@ -1,5 +1,6 @@
 import React from 'react';
 import { AsyncStorage,View , StatusBar } from 'react-native';
+import {Root} from 'native-base'
 export default class Auth extends React.Component {
     constructor(props) {
         super(props);

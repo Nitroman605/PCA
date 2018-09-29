@@ -4,6 +4,8 @@ import Login from './pages/login'
 import Sign from './pages/sign'
 import Home from './pages/home'
 import Auth from './pages/auth'
+import React from 'react';
+import {Root} from 'native-base'
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated'])
 
 const HomeStack = createStackNavigator({
@@ -26,7 +28,7 @@ const loginStack = createStackNavigator({
   headerMode : 'screen'
 });
 
-export default createSwitchNavigator(
+const Switch = createSwitchNavigator(
   {
     Home: HomeStack,
     Auth: Auth,
@@ -36,3 +38,8 @@ export default createSwitchNavigator(
     initialRouteName: 'Auth',
   }
 );
+
+export default () =>
+  <Root>
+    <Switch />
+  </Root>;

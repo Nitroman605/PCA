@@ -1,6 +1,6 @@
 import React from 'react';
-import { View,StatusBar, Text, Image  , StyleSheet , ImageBackground , KeyboardAvoidingView , AsyncStorage , Keyboard , TouchableWithoutFeedback , TouchableOpacity} from 'react-native';
-import { Input , Form , Item , Icon , Button , Toast , Root} from 'native-base'
+import { View,StatusBar, Text, Image  , ScrollView,StyleSheet , ImageBackground , KeyboardAvoidingView , AsyncStorage , Keyboard , TouchableWithoutFeedback , TouchableOpacity} from 'react-native';
+import { Input , Form , Item , Icon , Button , Toast , Root , Content} from 'native-base'
 import LocalizedStrings from 'react-native-localization';
 import {checkInternet} from './util/util'
 
@@ -12,20 +12,22 @@ let strings = new LocalizedStrings({
       errorLogin : "Incorrect Username or Password",
       errorConn : "Unable to reach Steadia Servers",
       errorNet : "Please Connect to the Internet",
-      noInput : "Please enter your username and password",
+      noInput : "Please enter your email and password",
       ok : "Ok", 
       sign : "Don't have an account ? Sign up",
+      wrongEmail : "The email is not correct",
     },
     ar: {
         user:"البريد الإلكتروني",
         password:"كلمة المرور",
         login:"تسجيل الدخول",
-        errorLogin : "اسم المستخدم أو كلمة المرور غير صحيحة",
+        errorLogin : "البريد الإلكتروني أو كلمة المرور غير صحيحة",
         errorConn : "خطا في الوصول إلى سيرفرات ستديا",
         errorNet : "الرجاء التحقق من اتصالك بالإنترنت",
-        noInput : "الرجاء ادخال اسم المستخدم و كلمة المرور", 
+        noInput : "الرجاء ادخال البريد الإلكتروني و كلمة المرور", 
         ok : "موافق",
         sing: "ليس لديك حساب ؟ قم بالتسجيل",
+        wrongEmail : "البريد الإلكتروني غير صحيح",
     }
    })
    
@@ -55,19 +57,18 @@ export default class Login extends React.Component {
      console.log(t)
     }
     login = () => {
-      this.props.navigation.navigate('Home')
-      /*
-        console.log("pressed login")
-        if(this.state.username != '' && this.state.password != ''){
+      //this.props.navigation.navigate('Home')
+        if(this.state.username != '' && this.state.password.length >=8){
+          if(this.validateEmail(this.state.username)){
             checkInternet().then(isConnected => {
               if (isConnected) {
-                fetch('http://35.205.99.70/user/signin', {
+                fetch('http://35.187.64.144/user/login', {
                   method: 'POST',
                   headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/x-www-form-urlencoded',
                   },
-                  body: "id=" + this.state.username + "&password=" + this.state.password
+                  body: "email=" + this.state.username + "&password=" + this.state.password
                 })
                   .then((response) => response.json())
                   .then(async (res) => {
@@ -77,6 +78,7 @@ export default class Login extends React.Component {
                       //let result: boolean = await regToken(res.data.loginToken, this.state.token);
                         this.setState({ disable: false });
                         await AsyncStorage.setItem('token',res.data.token);
+                        await AsyncStorage.setItem('email',this.state.username);
                         this.props.navigation.navigate('Home')
                     }
                     else if (res.status == "fail") {
@@ -122,13 +124,25 @@ export default class Login extends React.Component {
             this.setState({ disable: false });
             this.setState({error : true})
             Toast.show({
+                text: strings.wrongEmail,
+                position: 'bottom',
+                buttonText: strings.ok,
+                type: 'warning',
+                duration : 6000,
+              })
+          }
+          }
+          else{
+            this.setState({ disable: false });
+            this.setState({error : true})
+            Toast.show({
                 text: strings.noInput,
                 position: 'bottom',
                 buttonText: strings.ok,
                 type: 'warning',
                 duration : 6000,
               })
-          }*/
+          }
           
     }
     sign = () => {
@@ -137,7 +151,7 @@ export default class Login extends React.Component {
 
     render() {
         return (
-            <Root>
+          <View style={{flex : 1}} > 
             <StatusBar
           barStyle="light-content"
           backgroundColor="rgb(50,50,50)"
@@ -148,14 +162,14 @@ export default class Login extends React.Component {
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
  
-                <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}>
-                    <Image style={{ resizeMode: 'contain', width: 200, height: 200 }} source={require('./images/logo.png')} />
+                <View style={{ flex: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Image style={{ resizeMode: 'contain', width: 250, height: 250 }} source={require('./images/logoSense.png')} />
                 </View>
 
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 5 }}>
                     <View style={styles.itemContainer}>
                         <Form >
-                            <View style={{marginTop : 10}} >
+                            <View style={{marginTop : 20}} >
                                 <Item  error={this.state.error} style={[styles.item,{flexDirection : strings.getLanguage() == 'en'? 'row':'row-reverse'}]}>
                                     <Icon style={[styles.input,{color : this.state.username == ''?'rgb(90,90,90)':'rgb(4,95,225)'}]} active name="person" />
                                     <Input
@@ -193,7 +207,7 @@ export default class Login extends React.Component {
                       <Button disabled={this.state.disable} style = { styles.buttonLogin } block onPress={this.login}>
                         <Text uppercase={false} style={{color : 'rgb(255,255,255)', fontWeight : 'bold' , fontSize : 20}}>{strings.login}</Text>
                       </Button>
-                      <TouchableOpacity style={{marginTop : 40}} onPress={this.sign}>
+                      <TouchableOpacity style={{marginTop : 20}} onPress={this.sign}>
                         <Text uppercase={false} style={{color : 'rgb(255,255,255)', fontWeight : 'bold' , textAlign : 'center' , fontSize : 16 , textDecorationLine : 'underline'}}>{strings.sign}</Text>
                       </TouchableOpacity>
                     </View>
@@ -210,9 +224,13 @@ export default class Login extends React.Component {
             </ImageBackground>
             </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
-            </Root>
+            </View>
         );
     }
+    validateEmail(email) {
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
+  }
 }
 
 const styles = StyleSheet.create({
@@ -255,7 +273,7 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 50,
+      marginTop: 30,
       padding : 10
     },
     buttonLogin: {

@@ -1,4 +1,4 @@
-package com.pca;
+package com.sensebook;
 
 import android.app.Application;
 
