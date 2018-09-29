@@ -12,7 +12,10 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-
+import com.polidea.reactnativeble.BlePackage;
+import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
+import com.devstepbcn.wifi.AndroidWifiPackage;
+import com.ocetnik.timer.BackgroundTimerPackage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +35,11 @@ public class MainApplication extends Application implements ReactApplication {
             new RNDeviceInfo(),
             new RNSensorsPackage(),
             new VectorIconsPackage(),
-            new ReactNativeLocalizationPackage()
+            new ReactNativeLocalizationPackage(),
+            new BlePackage(),
+            new RNFusedLocationPackage(),
+            new AndroidWifiPackage(),
+            new BackgroundTimerPackage()
       );
     }
 
