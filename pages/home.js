@@ -162,7 +162,7 @@ export default class Home extends React.Component {
             this.setState({gpsValues : this.gpsValues,gyroValues : this.gyroValues,acsoValues : this.acsoValues,
                 magnoValues : this.magnoValues ,proxValues : this.proxValues , wifiNet : this.wifiNet,
                 bleDev : this.bleDev})
-        },100)
+        },500)
     }
     componentWillUnmount() {
         Proximity.removeListener(this._proximityListener);
