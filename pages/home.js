@@ -37,6 +37,8 @@ let strings = new LocalizedStrings({
         about: "About",
         logout: "Logout",
         forContact : "Contact This email if you want to download all your data",
+        permissionTitleBle : "Can we access your Bluetooth?",
+        permissionSubtitleBle : "to collect ble we need Bluetooth permission",
     },
     ar: {
         title: "الحساسات",
@@ -56,6 +58,8 @@ let strings = new LocalizedStrings({
         about: "عن التطبيق",
         logout: "تسجيل الخروج",
         forContact : "الرجاء التواصل مع هذا البريد اذارغبت بتحميل بياناتك",
+        permissionTitleBle : "هل من الممكن الحصول على صلاحية البلوتوث ؟",
+        permissionSubtitleBle : "لجمع معلومات البلوتوث سوف نحتاج لصلاحية البلوتوث",
     }
 })
 
@@ -221,7 +225,7 @@ export default class Home extends React.Component {
     }
 
     checkLocationPermession = async() =>{
-        return Permissions.check('location').then(response => {
+        return Permissions.check('location',{ type: 'always' }).then(response => {
             if(response == 'authorized'){
                 return true;
             }
@@ -232,7 +236,7 @@ export default class Home extends React.Component {
     }
 
     requestLocationPermession = async() => {
-        return Permissions.request('location').then(response => {
+        return Permissions.request('location',{ type: 'always' }).then(response => {
             if(response == 'authorized'){
                 return true;
             }
@@ -253,6 +257,44 @@ export default class Home extends React.Component {
               style: 'cancel',
             },
             { text: strings.ok, onPress: this.requestLocationPermession },
+            Platform.OS == 'ios'?{ text: strings.openSettings, onPress: Permissions.openSettings }:null,
+          ],
+        )
+    }
+
+    checkBlePermession = async() =>{
+        return Permissions.check('bluetooth').then(response => {
+            if(response == 'authorized'){
+                return true;
+            }
+            else{
+                return false;
+            }
+          })
+    }
+
+    requestBlePermession = async() => {
+        return Permissions.request('bluetooth').then(response => {
+            if(response == 'authorized'){
+                return true;
+            }
+            else{
+                return false;
+            }
+          })
+    }
+
+    alertForBlePermission() {
+        Alert.alert(
+          strings.permissionTitleBle,
+          strings.permissionSubtitleBle,
+          [
+            {
+              text: strings.no,
+              onPress: () => console.log('Permission denied'),
+              style: 'cancel',
+            },
+            { text: strings.ok, onPress: this.requestBlePermession },
             Platform.OS == 'ios'?{ text: strings.openSettings, onPress: Permissions.openSettings }:null,
           ],
         )
@@ -414,7 +456,27 @@ export default class Home extends React.Component {
                         else{
                             this.requestLocationPermession().then((boo) => {
                                 if(boo){
-                                    this.bleScanner()
+                                    if(Platform.OS == 'ios'){
+                                        this.checkBlePermession().then((boo) => {
+                                            if(boo){
+                                                this.bleScanner()
+                                            }
+                                            else{
+                                                this.requestBlePermession().then((boo) => {
+                                                    if(boo){
+                                                        this.bleScanner()
+                                                    }
+                                                    else{
+                                                        this.state.ble = false
+                                                        this.alertForBlePermission();
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }
+                                    else{
+                                        this.bleScanner()
+                                    }
                                 }
                                 else{
                                     this.state.ble = false
