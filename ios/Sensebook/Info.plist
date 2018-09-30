@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>PCA</string>
+	<string>Sensebook</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -35,26 +35,26 @@
 			</dict>
 		</dict>
 	</dict>
-<key>NSBluetoothPeripheralUsageDescription</key>
-<string>For collecting nearby ble devices</string>
-<key>NSCalendarsUsageDescription</key>
-<string>Not used</string>
-<key>NSCameraUsageDescription</key>
-<string>Not used</string>
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>GPS will help improve user experience</string>
-<key>NSPhotoLibraryAddUsageDescription</key>
-<string>Not Used</string>
-<key>NSPhotoLibraryUsageDescription</key>
-<string>Not used</string>
-<key>NSSpeechRecognitionUsageDescription</key>
-<string>Not used</string>
-<key>NSAppleMusicUsageDescription</key>
-<string>Not used</string>
-<key>NSMotionUsageDescription</key>
-<string>Not used</string>
-<key>NSLocationAlwaysUsageDescription</key>
-<string>GPS will help improve user experience</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Not used</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>For collecting nearby ble devices</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Not used</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Not used</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>GPS will help improve user experience</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>GPS will help improve user experience</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Not used</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Not Used</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Not used</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Not used</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>

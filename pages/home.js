@@ -872,7 +872,7 @@ export default class Home extends React.Component {
             return (
                 <List>
                     <Separator style={{ backgroundColor: 'rgb(204,201,220)', paddingVertical: 3 }} bordered>
-                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} >GPS</Text>
+                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} adjustsFontSizeToFit={true}>GPS</Text>
                     </Separator>
                     <ListItem>
                         <Left>
@@ -917,7 +917,7 @@ export default class Home extends React.Component {
             return (
                 <List>
                     <Separator style={{ backgroundColor: 'rgb(204,201,220)', paddingVertical: 3 }} bordered>
-                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} >Gyroscope</Text>
+                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} adjustsFontSizeToFit={true}>Gyroscope</Text>
                     </Separator>
                     <ListItem>
                         <Left>
@@ -962,7 +962,7 @@ export default class Home extends React.Component {
             return (
                 <List>
                     <Separator style={{ backgroundColor: 'rgb(204,201,220)', paddingVertical: 3 }} bordered>
-                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} >Accelerometer</Text>
+                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} adjustsFontSizeToFit={true}>Accelerometer</Text>
                     </Separator>
                     <ListItem>
                         <Left>
@@ -1007,7 +1007,7 @@ export default class Home extends React.Component {
             return (
                 <List>
                     <Separator style={{ backgroundColor: 'rgb(204,201,220)', paddingVertical: 3 }} bordered>
-                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} >Magnetometer</Text>
+                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} adjustsFontSizeToFit={true}>Magnetometer</Text>
                     </Separator>
                     <ListItem>
                         <Left>
@@ -1052,11 +1052,11 @@ export default class Home extends React.Component {
             return (
                 <List>
                     <Separator style={{ backgroundColor: 'rgb(204,201,220)', paddingVertical: 3 }} bordered>
-                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} >Proximity</Text>
+                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18}} adjustsFontSizeToFit={true}>Proximity</Text>
                     </Separator>
                     <ListItem>
                         <Left>
-                            <Text>Proximity :</Text>
+                            <Text >Proximity :</Text>
                         </Left>
                         <Body>
                         </Body>
@@ -1077,7 +1077,7 @@ export default class Home extends React.Component {
                 
                 <List>
                     <Separator style={{ backgroundColor: 'rgb(204,201,220)', paddingVertical: 3 }} bordered>
-                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} >Wifi</Text>
+                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} adjustsFontSizeToFit={true}>Wifi</Text>
                     </Separator>
                     
                     <ListItem>
@@ -1111,7 +1111,7 @@ export default class Home extends React.Component {
                 
                 <List>
                     <Separator style={{ backgroundColor: 'rgb(204,201,220)', paddingVertical: 3 }} bordered>
-                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} >Ble</Text>
+                        <Text style={{ textAlign: 'center', color: 'black', fontSize: 18 }} adjustsFontSizeToFit={true}>Ble</Text>
                     </Separator>
                     
                     <ListItem>
