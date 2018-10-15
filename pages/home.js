@@ -150,19 +150,36 @@ export default class Home extends React.Component {
         interval = interval != null?parseFloat(interval):1
         this.setState({savedInterval : interval , selectedValue : interval , slideValue : interval , email : email})
         if(this.state.savedInterval != 0){
-            this.state.wifiTimer = BackgroundTimer.setInterval(async () => { 
-                if(this.state.gps){
-                    await this.startGPS();
-                }
-                if(this.state.wifi){
-                    await this.startWifi();
-                }
-                if(this.state.ble){
-                    await this.bleScanner();
-                }
-                this.collectData();
-                }, 
-                this.state.savedInterval * 60000);
+            if(Platform.OS == 'ios'){
+                BackgroundTimer.runBackgroundTimer(() => { 
+                    if(this.state.gps){
+                        await this.startGPS();
+                    }
+                    if(this.state.wifi){
+                        await this.startWifi();
+                    }
+                    if(this.state.ble){
+                        await this.bleScanner();
+                    }
+                    this.collectData();
+                    }, 
+                    this.state.savedInterval * 60000);
+            }
+            else {
+                this.state.wifiTimer = BackgroundTimer.setInterval(async () => { 
+                    if(this.state.gps){
+                        await this.startGPS();
+                    }
+                    if(this.state.wifi){
+                        await this.startWifi();
+                    }
+                    if(this.state.ble){
+                        await this.bleScanner();
+                    }
+                    this.collectData();
+                    }, 
+                    this.state.savedInterval * 60000);
+            }
         }
         this.state.alwaysUpdate = setInterval(async ()=>{
             this.setState({gpsValues : this.gpsValues,gyroValues : this.gyroValues,acsoValues : this.acsoValues,
@@ -180,6 +197,9 @@ export default class Home extends React.Component {
         accelerationObservable.stop();
         magnoObservable.stop();
         BackgroundTimer.clearInterval(this.state.wifiTimer);
+        if(Platform.OS == 'ios'){
+            BackgroundTimer.stopBackgroundTimer();
+        }
     }
 
     collectData = async() => {
