@@ -22,7 +22,7 @@ let strings = new LocalizedStrings({
     en: {
         title: "Sensors",
         modalTitle: "Settings",
-        interval: "Interval between Data Collection",
+        interval: "Interval of data collection",
         minute: "Minute",
         save: "Save",
         networks : "Networks :",
@@ -36,9 +36,10 @@ let strings = new LocalizedStrings({
         openSettings : "Open Settings",
         about: "About",
         logout: "Logout",
-        forContact : "Contact This email if you want to download all your data",
+        forContact : "Contact this email if you have any issues",
         permissionTitleBle : "Can we access your Bluetooth?",
         permissionSubtitleBle : "to collect ble we need Bluetooth permission",
+        siteData : "Visit this website to download your data",
     },
     ar: {
         title: "الحساسات",
@@ -57,9 +58,10 @@ let strings = new LocalizedStrings({
         openSettings : "فتح الإعدادات",
         about: "عن التطبيق",
         logout: "تسجيل الخروج",
-        forContact : "الرجاء التواصل مع هذا البريد اذارغبت بتحميل بياناتك",
+        forContact : "الرجاء التواصل مع هذا البريد اذا واجهتك أي مشاكل",
         permissionTitleBle : "هل من الممكن الحصول على صلاحية البلوتوث ؟",
         permissionSubtitleBle : "لجمع معلومات البلوتوث سوف نحتاج لصلاحية البلوتوث",
+        siteData : "قم بزيارة هذا الموقع اذا رغبت بتحميل بياناتك",
     }
 })
 
@@ -145,7 +147,7 @@ export default class Home extends React.Component {
         this.props.navigation.setParams({ menu: this.openDrawer.bind(this) });
         let email = await AsyncStorage.getItem("email")
         let interval = await AsyncStorage.getItem("interval")
-        interval = interval != null?parseInt(interval):1
+        interval = interval != null?parseFloat(interval):1
         this.setState({savedInterval : interval , selectedValue : interval , slideValue : interval , email : email})
         if(this.state.savedInterval != 0){
             this.state.wifiTimer = BackgroundTimer.setInterval(async () => { 
@@ -683,15 +685,17 @@ export default class Home extends React.Component {
                             <View style={{ marginTop: 20 }} >
                                 <Text style={{ marginBottom: 5, textAlign: 'center', color: 'white', fontWeight: 'bold' }} >{strings.interval}</Text>
                                 <Slider
-                                    maximumValue={60}
-                                    minimumValue={0}
+                                    maximumValue={60.5}
+                                    minimumValue={0.5}
                                     minimumTrackTintColor='rgb(0, 182, 255)'
                                     maximumTrackTintColor='black'
                                     thumbTintColor='rgb(0, 182, 255)'
                                     value={this.state.slideValue}
                                     step={1}
-                                    onSlidingComplete={(v) => { this.setState({ selectedValue: v }) }}
-                                    onValueChange={(v) => { this.setState({ selectedValue: v }) }}
+                                    onSlidingComplete={(v) => { 
+                                        console.log(v)
+                                        this.setState({selectedValue: v==0.5?0.5:Math.floor(v)}) }}
+                                    onValueChange={(v) => { this.setState({ selectedValue: v==0.5?0.5:Math.floor(v)}) }}
                                 />
                                 <Text style={{ textAlign: 'center', color: 'white' }} >{this.state.selectedValue + " " + strings.minute}</Text>
                             </View>
@@ -746,13 +750,15 @@ export default class Home extends React.Component {
                     justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent'
                 }}>
                     <TouchableWithoutFeedback>
-                        <View style={{ width: 250, height: 200, backgroundColor: 'rgb(50,50,50)', elevation: 10 }}>
+                        <View style={{ width: 250, height: 300, backgroundColor: 'rgb(50,50,50)', elevation: 10 }}>
                             <View style={{ borderBottomWidth: 1, borderBottomColor: 'black', paddingVertical: 10 }} >
                                 <Text style={{ textAlign: 'center', fontSize: 18, color: 'rgb(0, 182, 255)' }} >{strings.about}</Text>
                             </View>
                             <View style={{ marginTop: 20 }} >
-                                <Text style={{ marginBottom: 5, textAlign: 'center', color: 'white', fontWeight: 'bold' }} >{strings.forContact}</Text>
-                                <TouchableOpacity style={{marginTop : 10}} onPress={() => {Linking.openURL('mailto:wsasmary@uqu.edu.sa?subject='+this.state.email+' - request Data')}} ><Text style={{ marginBottom: 5, textAlign: 'center', color: 'rgb(200,200,200)', fontWeight: 'bold' , textDecorationLine : 'underline' }} >wsasmary@uqu.edu.sa</Text></TouchableOpacity>
+                                <Text style={{ marginBottom: 5, textAlign: 'center', color: 'white', fontWeight: 'bold' }} >{strings.siteData}</Text>
+                                <TouchableOpacity style={{marginTop : 10}} onPress={() => {Linking.openURL('http://sensebook.ai')}} ><Text style={{ marginBottom: 5, textAlign: 'center', color: 'rgb(200,200,200)', fontWeight: 'bold' , textDecorationLine : 'underline' }} >http://sensebook.ai/</Text></TouchableOpacity>
+                                <Text style={{ marginBottom: 5,marginTop : 10, textAlign: 'center', color: 'white', fontWeight: 'bold' }} >{strings.forContact}</Text>
+                                <TouchableOpacity style={{marginTop : 10}} onPress={() => {Linking.openURL('mailto:sensebook1@gmail.com?subject='+this.state.email+' - ')}} ><Text style={{ marginBottom: 5, textAlign: 'center', color: 'rgb(200,200,200)', fontWeight: 'bold' , textDecorationLine : 'underline' }} >snesebook1@gmail.com</Text></TouchableOpacity>
                             </View>
                             <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }} >
                                 <TouchableOpacity style={{marginRight: 10, marginBottom: 10}} onPress={() => {this.setAboutModalVisible()}}>

@@ -103,7 +103,7 @@ export default class Sign extends React.Component {
                               'Accept': 'application/json',
                               'Content-Type': 'application/x-www-form-urlencoded',
                             },
-                            body: "email=" + this.state.username + "&password=" + this.state.password + "&brand=" + brand +"&modal="+modal
+                            body: "email=" + this.state.username.toLowerCase() + "&password=" + this.state.password + "&brand=" + brand +"&modal="+modal
                           })
                             .then((response) => response.json())
                             .then(async (res) => {
