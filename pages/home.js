@@ -151,7 +151,7 @@ export default class Home extends React.Component {
         this.setState({savedInterval : interval , selectedValue : interval , slideValue : interval , email : email})
         if(this.state.savedInterval != 0){
             if(Platform.OS == 'ios'){
-                BackgroundTimer.runBackgroundTimer(() => { 
+                BackgroundTimer.runBackgroundTimer(async () => { 
                     if(this.state.gps){
                         await this.startGPS();
                     }
@@ -653,9 +653,7 @@ export default class Home extends React.Component {
                     <TouchableOpacity style={[styles.sensorContainer]} onPress={() => this.toggleSensor('proximity')}>
                         <IconFont style={{ color: this.state.proximity ? 'rgb(0, 182, 255)' : 'rgb(180,180,180)', backgroundColor: 'transparent', borderColor: 'transparent', fontSize: 38 }} name='proximity' />
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.sensorContainer]} onPress={() => this.toggleSensor('wifi')}>
-                        <Icon style={{ color: this.state.wifi ? 'rgb(0, 182, 255)' : 'rgb(180,180,180)', backgroundColor: 'transparent', borderColor: 'transparent', fontSize: 38 }} name='ios-wifi' />
-                    </TouchableOpacity>
+                    {this.getWifiTouchable()}
                     <TouchableOpacity style={[styles.sensorContainer]} onPress={() => this.toggleSensor('ble')}>
                         <Icon style={{ color: this.state.ble ? 'rgb(0, 182, 255)' : 'rgb(180,180,180)', backgroundColor: 'transparent', borderColor: 'transparent', fontSize: 38 }} name='md-bluetooth' />
                     </TouchableOpacity>
@@ -678,6 +676,18 @@ export default class Home extends React.Component {
             </View>
             </Drawer>
         );
+    }
+    getWifiTouchable(){
+        if(Platform.OS == 'ios'){
+            return null;
+        }
+        else{
+            return(
+                <TouchableOpacity style={[styles.sensorContainer]} onPress={() => this.toggleSensor('wifi')}>
+                <Icon style={{ color: this.state.wifi ? 'rgb(0, 182, 255)' : 'rgb(180,180,180)', backgroundColor: 'transparent', borderColor: 'transparent', fontSize: 38 }} name='ios-wifi' />
+            </TouchableOpacity>
+            )
+        }
     }
 
     getSettingsModal(){
