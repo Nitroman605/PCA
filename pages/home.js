@@ -734,19 +734,37 @@ export default class Home extends React.Component {
                                     this.setState({savedInterval : this.state.selectedValue})
                                     BackgroundTimer.clearInterval(this.state.wifiTimer)
                                     if(this.state.selectedValue != 0){
-                                        this.state.wifiTimer = BackgroundTimer.setInterval(async () => { 
-                                            if(this.state.gps){
-                                                await this.startGPS();
-                                            }
-                                            if(this.state.wifi){
-                                                await this.startWifi();
-                                            }
-                                            if(this.state.ble){
-                                                await this.bleScanner();
-                                            }
-                                            this.collectData();
-                                            }, 
-                                            this.state.selectedValue * 60000);
+                                        if(Platform.OS == 'ios'){
+                                            BackgroundTimer.stopBackgroundTimer();
+                                            BackgroundTimer.runBackgroundTimer(async () => { 
+                                                if(this.state.gps){
+                                                    await this.startGPS();
+                                                }
+                                                if(this.state.wifi){
+                                                    await this.startWifi();
+                                                }
+                                                if(this.state.ble){
+                                                    await this.bleScanner();
+                                                }
+                                                this.collectData();
+                                                }, 
+                                                this.state.savedInterval * 60000);
+                                        }
+                                        else {
+                                            this.state.wifiTimer = BackgroundTimer.setInterval(async () => { 
+                                                if(this.state.gps){
+                                                    await this.startGPS();
+                                                }
+                                                if(this.state.wifi){
+                                                    await this.startWifi();
+                                                }
+                                                if(this.state.ble){
+                                                    await this.bleScanner();
+                                                }
+                                                this.collectData();
+                                                }, 
+                                                this.state.savedInterval * 60000);
+                                        }
                                     }
                                     this.setModalVisible()
                                     AsyncStorage.setItem("interval",this.state.selectedValue+"")
